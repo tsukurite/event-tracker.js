@@ -1,0 +1,26 @@
+{
+  "name": "event-tracker",
+  "version": "0.0.0",
+  "author": "sasa+1 <sasaplus1@gmail.com>",
+  "description": "track event",
+  "main": "./index.js",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsukurite/event-tracker.js.git"
+  },
+  "scripts": {
+    "build": "npm run compile && npm run minify",
+    "compile": "npm run webpack -- --output-file event-tracker.js",
+    "minify": "npm run webpack -- --optimize-minimize --output-file event-tracker.min.js",
+    "webpack": "webpack --colors --display-error-details --progress"
+  },
+  "dependencies": {
+    "dom-delegate": "2.0.3",
+    "domready": "^1.0.8"
+  },
+  "devDependencies": {
+    "webpack": "^1.13.2"
+  }
+}
