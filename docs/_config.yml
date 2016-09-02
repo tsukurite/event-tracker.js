@@ -1,0 +1,32 @@
+name:
+  event-tracker.js
+
+site:
+  https://tsukurite.github.io
+
+baseurl:
+  /event-tracker.js
+
+timezone:
+  Asia/Tokyo
+
+markdown:
+  kramdown
+
+highlighter:
+  rouge
+
+sass:
+  style:
+    expanded
+
+gems:
+  - jekyll-redirect-from
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - Rakefile
+  - vendor
