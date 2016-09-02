@@ -21,7 +21,8 @@ var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 //------------------------------------------------------------------------------
 
-var domDelegate = require('dom-delegate'),
+var assign = require('lodash.assign'),
+    domDelegate = require('dom-delegate'),
     domready = require('domready');
 
 var delegate = null,
@@ -91,7 +92,11 @@ function track(eventType, selector, data) {
     };
   } else if (typeof data === 'function') {
     handler = function(event, target) {
-      send(data(event, target));
+      var attrs = assign(
+        getDataAttributes(target), data(event, target)
+      );
+
+      send(attrs);
     };
   } else if (/*data !== null &&*/ typeof data === 'object') {
     handler = function(event, target) {
