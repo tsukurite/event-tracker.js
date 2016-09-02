@@ -21,7 +21,8 @@ var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 //------------------------------------------------------------------------------
 
-var domDelegate = require('dom-delegate'),
+var assign = require('lodash.assign'),
+    domDelegate = require('dom-delegate'),
     domready = require('domready');
 
 var delegate = null,
@@ -34,7 +35,7 @@ var delegate = null,
  * @return {Object}
  */
 function getDataAttributes(element) {
-  var attrs, i, len, attr, result;
+  var attrs, i, len, result, attr, name, value;
 
   if (!element || element.nodeType !== 1) {
     throw new TypeError('element must be HTMLElement');
@@ -44,20 +45,24 @@ function getDataAttributes(element) {
     return {};
   }
 
-  attrs = element.getAttributes();
   result = {};
+
+  attrs = element.attributes;
 
   for (i = 0, len = attrs.length; i < len; ++i) {
     attr = attrs[i];
 
-    if (/^data-/.test(attr)) {
+    name = attr.name;
+    value = attr.value;
+
+    if (/^data-/.test(name)) {
       result[
-        attr
+        name
           .replace(/^data-/, '')
           .replace(/-./g, function(s) {
             return s.slice(1).toUpperCase();
           })
-      ] = element.getAttribute(attr);
+      ] = value;
     }
   }
 
@@ -90,9 +95,13 @@ function track(eventType, selector, data) {
     };
   } else if (typeof data === 'function') {
     handler = function(event, target) {
-      send(data(event, target));
+      var attrs = assign(
+        getDataAttributes(target), data(event, target)
+      );
+
+      send(attrs);
     };
-  } else if (data !== null && typeof data === 'object') {
+  } else if (/*data !== null &&*/ typeof data === 'object') {
     handler = function(event, target) {
       send(data);
     };
@@ -147,6 +156,8 @@ function send(data) {
       default:
         props = [];
     }
+
+    args = [];
 
     for (i = 0, len = props.length; i < len; ++i) {
       key = props[i];
