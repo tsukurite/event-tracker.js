@@ -34,7 +34,7 @@ var delegate = null,
  * @return {Object}
  */
 function getDataAttributes(element) {
-  var attrs, i, len, attr, result;
+  var attrs, i, len, result, attr;
 
   if (!element || element.nodeType !== 1) {
     throw new TypeError('element must be HTMLElement');
@@ -44,8 +44,9 @@ function getDataAttributes(element) {
     return {};
   }
 
-  attrs = element.getAttributes();
   result = {};
+
+  attrs = element.getAttributes();
 
   for (i = 0, len = attrs.length; i < len; ++i) {
     attr = attrs[i];
