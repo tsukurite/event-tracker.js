@@ -93,7 +93,7 @@ function track(eventType, selector, data) {
     handler = function(event, target) {
       send(data(event, target));
     };
-  } else if (data !== null && typeof data === 'object') {
+  } else if (/*data !== null &&*/ typeof data === 'object') {
     handler = function(event, target) {
       send(data);
     };
