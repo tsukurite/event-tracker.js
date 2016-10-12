@@ -10,13 +10,21 @@ $ npm install tsukurite/event-tracker.js
 
 ## Usage
 
+via `require()`
+
+```js
+var eventTracker = require('event-tracker');
+```
+
+via `<script>`
+
 ```html
 <script src="event-tracker.min.js"></script>
 ```
 
 ## Example
 
-see [example](https://tsukurite.github.io/event-tracker.js/).
+see [examples](https://tsukurite.github.io/event-tracker.js/).
 
 ## Functions
 
