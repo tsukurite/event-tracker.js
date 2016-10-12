@@ -2,6 +2,12 @@
 
 track event
 
+## Installation
+
+```sh
+$ npm install tsukurite/event-tracker.js
+```
+
 ## Usage
 
 ```html
