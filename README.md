@@ -28,14 +28,16 @@ see [examples](https://tsukurite.github.io/event-tracker.js/).
 
 ## Functions
 
-### track(eventType, selector[, data])
+### track(eventType, selector[, data[, callback]])
 
 - `eventType`
   - `String` - event name
 - `selector`
   - `String` - selector for target elements
-- `data`
+- `[data]`
   - `Function|Object` - tracking data
+- `[callback]`
+  - `Function` - callback function
 
 ## License
 
