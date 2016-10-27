@@ -77,7 +77,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	//------------------------------------------------------------------------------
 
-	var hasOwnProperty = Object.prototype.hasOwnProperty;
+	var toString = Object.prototype.toString,
+	    hasOwnProperty = Object.prototype.hasOwnProperty;
+
+	/**
+	 * check to value is Function
+	 *
+	 * @param {*} value
+	 * @return {Boolean}
+	 */
+	function isFunction(value) {
+	  return (
+	    typeof value === 'function' || toString.call(value) === '[object Function]'
+	  );
+	}
 
 	//------------------------------------------------------------------------------
 
@@ -135,15 +148,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {String} eventType
 	 * @param {String} selector
 	 * @param {Function|Object} [data]
+	 * @param {Function} [callback]
 	 */
-	function track(eventType, selector, data) {
+	function track(eventType, selector, data, callback) {
 	  var handler;
 
 	  if (delegate === null) {
 	    dataList.push({
 	      eventType: eventType,
 	      selector: selector,
-	      data: data
+	      data: data,
+	      callback: callback
 	    });
 
 	    return;
@@ -151,19 +166,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  if (!data) {
 	    handler = function(event, target) {
-	      send(getDataAttributes(target));
+	      send(getDataAttributes(target), callback);
 	    };
-	  } else if (typeof data === 'function') {
+	  } else if (isFunction(data)) {
 	    handler = function(event, target) {
-	      var attrs = assign(
-	        getDataAttributes(target), data(event, target)
-	      );
-
-	      send(attrs);
+	      send(data(event, target), callback);
 	    };
 	  } else if (/*data !== null &&*/ typeof data === 'object') {
 	    handler = function(event, target) {
-	      send(data);
+	      send(data, callback);
 	    };
 	  }
 
@@ -174,9 +185,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * send data
 	 *
 	 * @param {Object} data
+	 * @param {Function} callback
 	 */
-	function send(data) {
-	  var props, args, i, len, key;
+	function send(data, callback) {
+	  var cloned, props, args, i, len, key;
 
 	  if (data === null || typeof data !== 'object') {
 	    throw new TypeError('data must be an Object');
@@ -184,7 +196,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  if (hasOwnProperty.call(data, 'hitType')) {
 	    // ga
-	    switch (data.hitType) {
+
+	    cloned = assign({}, data);
+
+	    if (isFunction(callback)) {
+	      cloned.fieldsObject = assign({}, data.fieldsObject, {
+	        hitCallback: callback
+	      });
+	    }
+
+	    switch (cloned.hitType) {
 	      case 'event':
 	        props = [
 	          'hitType',
@@ -222,17 +243,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    for (i = 0, len = props.length; i < len; ++i) {
 	      key = props[i];
 
-	      hasOwnProperty.call(data, key) && args.push(data[key]);
+	      hasOwnProperty.call(cloned, key) && args.push(cloned[key]);
 	    }
 
 	    ga.apply(ga, ['send'].concat(args));
 	  } else {
 	    // dataLayer
-	    dataLayer.push(data);
+
+	    cloned = assign({}, data, (isFunction(callback)) ? {
+	      eventCallback: callback
+	    } : {});
+
+	    dataLayer.push(cloned);
 	  }
 	}
 
 	module.exports = {
+	  getDataAttributes: getDataAttributes,
 	  track: track
 	};
 
@@ -246,7 +273,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  for (i = 0, len = dataList.length; i < len; ++i) {
 	    metadata = dataList[i];
 
-	    track(metadata.eventType, metadata.selector, metadata.data);
+	    track(
+	      metadata.eventType,
+	      metadata.selector,
+	      metadata.data,
+	      metadata.callback
+	    );
 	  }
 
 	  dataList = [];
