@@ -2,7 +2,21 @@
 
 track event
 
+## Installation
+
+```sh
+$ npm install tsukurite/event-tracker.js
+```
+
 ## Usage
+
+via `require()`
+
+```js
+var eventTracker = require('event-tracker');
+```
+
+via `<script>`
 
 ```html
 <script src="event-tracker.min.js"></script>
@@ -10,18 +24,20 @@ track event
 
 ## Example
 
-see [example](https://tsukurite.github.io/event-tracker.js/).
+see [examples](https://tsukurite.github.io/event-tracker.js/).
 
 ## Functions
 
-### track(eventType, selector[, data])
+### track(eventType, selector[, data[, callback]])
 
 - `eventType`
   - `String` - event name
 - `selector`
   - `String` - selector for target elements
-- `data`
+- `[data]`
   - `Function|Object` - tracking data
+- `[callback]`
+  - `Function` - callback function
 
 ## License
 

@@ -16,7 +16,20 @@ var ga = w.ga,
 
 //------------------------------------------------------------------------------
 
-var hasOwnProperty = Object.prototype.hasOwnProperty;
+var toString = Object.prototype.toString,
+    hasOwnProperty = Object.prototype.hasOwnProperty;
+
+/**
+ * check to value is Function
+ *
+ * @param {*} value
+ * @return {Boolean}
+ */
+function isFunction(value) {
+  return (
+    typeof value === 'function' || toString.call(value) === '[object Function]'
+  );
+}
 
 //------------------------------------------------------------------------------
 
@@ -74,15 +87,17 @@ function getDataAttributes(element) {
  * @param {String} eventType
  * @param {String} selector
  * @param {Function|Object} [data]
+ * @param {Function} [callback]
  */
-function track(eventType, selector, data) {
+function track(eventType, selector, data, callback) {
   var handler;
 
   if (delegate === null) {
     dataList.push({
       eventType: eventType,
       selector: selector,
-      data: data
+      data: data,
+      callback: callback
     });
 
     return;
@@ -90,19 +105,19 @@ function track(eventType, selector, data) {
 
   if (!data) {
     handler = function(event, target) {
-      send(getDataAttributes(target));
+      send(getDataAttributes(target), callback);
     };
-  } else if (typeof data === 'function') {
+  } else if (isFunction(data)) {
     handler = function(event, target) {
       var attrs = assign(
         getDataAttributes(target), data(event, target)
       );
 
-      send(attrs);
+      send(attrs, callback);
     };
   } else if (/*data !== null &&*/ typeof data === 'object') {
     handler = function(event, target) {
-      send(data);
+      send(data, callback);
     };
   }
 
@@ -113,8 +128,9 @@ function track(eventType, selector, data) {
  * send data
  *
  * @param {Object} data
+ * @param {Function} callback
  */
-function send(data) {
+function send(data, callback) {
   var props, args, i, len, key;
 
   if (data === null || typeof data !== 'object') {
@@ -123,6 +139,7 @@ function send(data) {
 
   if (hasOwnProperty.call(data, 'hitType')) {
     // ga
+
     switch (data.hitType) {
       case 'event':
         props = [
@@ -164,10 +181,21 @@ function send(data) {
       hasOwnProperty.call(data, key) && args.push(data[key]);
     }
 
+    if (isFunction(callback)) {
+      args.push({
+        hitCallback: callback
+      });
+    }
+
     ga.apply(ga, ['send'].concat(args));
   } else {
     // dataLayer
-    dataLayer.push(data);
+
+    args = (isFunction(callback)) ? assign({}, data, {
+      eventCallback: callback
+    }) : data;
+
+    dataLayer.push(args);
   }
 }
 
@@ -185,7 +213,12 @@ domready(function(){
   for (i = 0, len = dataList.length; i < len; ++i) {
     metadata = dataList[i];
 
-    track(metadata.eventType, metadata.selector, metadata.data);
+    track(
+      metadata.eventType,
+      metadata.selector,
+      metadata.data,
+      metadata.callback
+    );
   }
 
   dataList = [];

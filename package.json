@@ -1,6 +1,6 @@
 {
   "name": "event-tracker",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "author": "sasa+1 <sasaplus1@gmail.com>",
   "description": "track event",
   "main": "./index.js",
