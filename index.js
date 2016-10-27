@@ -109,11 +109,7 @@ function track(eventType, selector, data, callback) {
     };
   } else if (isFunction(data)) {
     handler = function(event, target) {
-      var attrs = assign(
-        getDataAttributes(target), data(event, target)
-      );
-
-      send(attrs, callback);
+      send(data(event, target), callback);
     };
   } else if (/*data !== null &&*/ typeof data === 'object') {
     handler = function(event, target) {
@@ -202,6 +198,7 @@ function send(data, callback) {
 }
 
 module.exports = {
+  getDataAttributes: getDataAttributes,
   track: track
 };
 
