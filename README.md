@@ -28,6 +28,13 @@ see [examples](https://tsukurite.github.io/event-tracker.js/).
 
 ## Functions
 
+### getDataAttributes(element)
+
+- `element`
+  - `Element` - element
+- `return`
+  - `Object` - upper camel cased `data-*` attributes
+
 ### track(eventType, selector[, data[, callback]])
 
 - `eventType`
