@@ -16,7 +16,20 @@ var ga = w.ga,
 
 //------------------------------------------------------------------------------
 
-var hasOwnProperty = Object.prototype.hasOwnProperty;
+var toString = Object.prototype.toString,
+    hasOwnProperty = Object.prototype.hasOwnProperty;
+
+/**
+ * check to value is Function
+ *
+ * @param {*} value
+ * @return {Boolean}
+ */
+function isFunction(value) {
+  return (
+    typeof value === 'function' || toString.call(value) === '[object Function]'
+  );
+}
 
 //------------------------------------------------------------------------------
 
@@ -92,7 +105,7 @@ function track(eventType, selector, data) {
     handler = function(event, target) {
       send(getDataAttributes(target));
     };
-  } else if (typeof data === 'function') {
+  } else if (isFunction(data)) {
     handler = function(event, target) {
       var attrs = assign(
         getDataAttributes(target), data(event, target)
