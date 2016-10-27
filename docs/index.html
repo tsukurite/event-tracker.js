@@ -55,6 +55,14 @@
         {% highlight javascript %}eventTracker.track('click', '[data-hit-type]');{% endhighlight %}
       </section>
       <section class="main__feature feature">
+        <h2 class="feature__title">callback from ga</h2>
+        <a href="javascript:void 0" data-callback-ga data-hit-type="event" data-category="category" data-action="action" data-label="label">link</a>
+        {% highlight html %}<a href="javascript:void 0" data-callback-ga data-hit-type="event" data-category="category" data-action="action" data-label="label">link</a>{% endhighlight %}
+{% highlight javascript %}eventTracker.track('click', '[data-hit-type][data-callback-ga]', null, function() {
+  console.log('callback from ga');
+});{% endhighlight %}
+      </section>
+      <section class="main__feature feature">
         <h2 class="feature__title">track by dataLayer</h2>
         <a href="javascript:void 0" data-aaa="aaa" data-bbb="bbb" data-ccc="ccc">link</a>
         {% highlight html %}<a href="javascript:void 0" data-aaa="aaa" data-bbb="bbb" data-ccc="ccc">link</a>{% endhighlight %}
@@ -62,14 +70,17 @@
       </section>
       <section class="main__feature feature">
         <h2 class="feature__title">track event by ga with merged data</h2>
-        <a href="javascript:void 0" data-hit-type="event" data-category="category" data-action="action" data-value="value1">link1</a>
-        <a href="javascript:void 0" data-hit-type="event" data-category="category" data-action="action" data-value="value2">link2</a>
-        <a href="javascript:void 0" data-hit-type="event" data-category="category" data-action="action" data-value="value3">link3</a>
-        {% highlight html %}<a href="javascript:void 0" data-hit-type="event" data-category="category" data-action="action" data-value="value1">link1</a>
-<a href="javascript:void 0" data-hit-type="event" data-category="category" data-action="action" data-value="value2">link2</a>
-<a href="javascript:void 0" data-hit-type="event" data-category="category" data-action="action" data-value="value3">link3</a>{% endhighlight %}
+        <a href="javascript:void 0" data-value="value1">link1</a>
+        <a href="javascript:void 0" data-value="value2">link2</a>
+        <a href="javascript:void 0" data-value="value3">link3</a>
+        {% highlight html %}<a href="javascript:void 0" data-value="value1">link1</a>
+<a href="javascript:void 0" data-value="value2">link2</a>
+<a href="javascript:void 0" data-value="value3">link3</a>{% endhighlight %}
 {% highlight javascript %}eventTracker.track('click', '[data-value]', function(event, target) {
   return {
+    hitType: 'event',
+    category: 'category',
+    action: 'action'
     label: target.getAttribute('data-value')
   };
 });{% endhighlight %}
@@ -82,6 +93,18 @@
   aaa: 1,
   bbb: 2,
   ccc: 3
+});{% endhighlight %}
+      </section>
+      <section class="main__feature feature">
+        <h2 class="feature__title">callback from dataLayer</h2>
+        <a href="javascript:void 0" data-callback-data-layer>link</a>
+        {% highlight html %}<a href="javascript:void 0" data-callback-data-layer>link</a>{% endhighlight %}
+{% highlight javascript %}eventTracker.track('click', '[data-callback-data-layer]', {
+  aaa: 1,
+  bbb: 2,
+  ccc: 3
+}, function() {
+  console.log('callback from dataLayer');
 });{% endhighlight %}
       </section>
     </main>
