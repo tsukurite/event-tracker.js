@@ -131,7 +131,7 @@ function track(eventType, selector, data, callback) {
  * @param {Function} callback
  */
 function send(data, callback) {
-  var props, args, i, len, key;
+  var cloned, props, args, i, len, key;
 
   if (data === null || typeof data !== 'object') {
     throw new TypeError('data must be an Object');
@@ -140,7 +140,15 @@ function send(data, callback) {
   if (hasOwnProperty.call(data, 'hitType')) {
     // ga
 
-    switch (data.hitType) {
+    cloned = assign({}, data);
+
+    if (isFunction(callback)) {
+      cloned.fieldsObject = assign({}, data.fieldsObject, {
+        hitCallback: callback
+      });
+    }
+
+    switch (cloned.hitType) {
       case 'event':
         props = [
           'hitType',
@@ -178,24 +186,18 @@ function send(data, callback) {
     for (i = 0, len = props.length; i < len; ++i) {
       key = props[i];
 
-      hasOwnProperty.call(data, key) && args.push(data[key]);
-    }
-
-    if (isFunction(callback)) {
-      args.push({
-        hitCallback: callback
-      });
+      hasOwnProperty.call(cloned, key) && args.push(cloned[key]);
     }
 
     ga.apply(ga, ['send'].concat(args));
   } else {
     // dataLayer
 
-    args = (isFunction(callback)) ? assign({}, data, {
+    cloned = assign({}, data, (isFunction(callback)) ? {
       eventCallback: callback
-    }) : data;
+    } : {});
 
-    dataLayer.push(args);
+    dataLayer.push(cloned);
   }
 }
 
