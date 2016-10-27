@@ -67,7 +67,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  w.ga = function() {
 	    (w.ga.q = w.ga.q || []).push(arguments);
 	  };
-	  w.l = new Date().getTime();
+	  w.ga.l = new Date().getTime();
 	}
 
 	w.dataLayer || (w.dataLayer = []);
